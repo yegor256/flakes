@@ -23,7 +23,6 @@
  */
 package org.takes.facets.auth;
 
-import java.util.logging.Level;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.takes.Request;
@@ -32,6 +31,9 @@ import org.takes.Take;
 import org.takes.facets.flash.RsFlash;
 import org.takes.facets.forward.RsForward;
 
+import java.net.HttpURLConnection;
+import java.util.logging.Level;
+
 /**
  * Take available for authenticated users.
  *
@@ -39,7 +41,7 @@ import org.takes.facets.forward.RsForward;
  *
  * @since 0.1
  */
-@ToString(of = { "origin", "loc" })
+@ToString(of = {"origin", "loc"})
 @EqualsAndHashCode
 public final class TkSecure implements Take {
 
@@ -55,6 +57,7 @@ public final class TkSecure implements Take {
 
     /**
      * Ctor.
+     *
      * @param take Original
      * @since 0.10
      */
@@ -64,7 +67,8 @@ public final class TkSecure implements Take {
 
     /**
      * Ctor.
-     * @param take Original
+     *
+     * @param take     Original
      * @param location Where to forward
      */
     public TkSecure(final Take take, final String location) {
@@ -76,8 +80,9 @@ public final class TkSecure implements Take {
     public Response act(final Request request) throws Exception {
         if (new RqAuth(request).identity().equals(Identity.ANONYMOUS)) {
             throw new RsForward(
-                new RsFlash("access denied", Level.WARNING),
-                this.loc
+                    new RsFlash("access denied", Level.WARNING),
+                    HttpURLConnection.HTTP_UNAUTHORIZED,
+                    this.loc
             );
         }
         return this.origin.act(request);
