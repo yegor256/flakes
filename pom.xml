@@ -327,7 +327,7 @@ SOFTWARE.
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <scope>test</scope>
-      <version>1.11.0</version>
+      <version>1.13.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
