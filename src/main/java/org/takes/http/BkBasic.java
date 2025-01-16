@@ -37,6 +37,7 @@ import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.rq.RqLive;
+import org.takes.rq.RqUncloseable;
 import org.takes.rq.RqWithHeaders;
 import org.takes.rs.RsPrint;
 import org.takes.rs.RsText;
@@ -120,7 +121,7 @@ public final class BkBasic implements Back {
     private void print(final Request req, final OutputStream output)
         throws IOException {
         try {
-            new RsPrint(this.take.act(req)).print(output);
+            new RsPrint(this.take.act(new RqUncloseable(req))).print(output);
         } catch (final HttpException ex) {
             new RsPrint(BkBasic.failure(ex, ex.code())).print(output);
             // @checkstyle IllegalCatchCheck (10 lines)
