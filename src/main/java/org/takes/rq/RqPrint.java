@@ -38,6 +38,7 @@ import org.cactoos.scalar.LengthOf;
 import org.cactoos.text.Sticky;
 import org.cactoos.text.TextOf;
 import org.takes.Request;
+import org.takes.rq.RqHeaders.Smart;
 
 /**
  * Request decorator, to print it all.
@@ -140,14 +141,18 @@ public final class RqPrint extends RqWrap implements Text {
      * @throws IOException If fails
      */
     public void printBody(final OutputStream output) throws IOException {
-        final InputStream input = new RqChunk(new RqLengthAware(this)).body();
-        final byte[] buf = new byte[4096];
-        while (true) {
-            final int bytes = input.read(buf);
-            if (bytes < 0) {
-                break;
+        final Smart smart = new RqHeaders.Smart(this);
+        if (!smart.single("Transfer-Encoding", "").isEmpty()
+            || !smart.single("Content-Length", "").isEmpty()) {
+            final InputStream input = new RqChunk(new RqLengthAware(this)).body();
+            final byte[] buf = new byte[4096];
+            while (true) {
+                final int bytes = input.read(buf);
+                if (bytes < 0) {
+                    break;
+                }
+                output.write(buf, 0, bytes);
             }
-            output.write(buf, 0, bytes);
         }
     }
 
