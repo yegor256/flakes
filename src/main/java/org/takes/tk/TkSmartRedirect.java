@@ -29,7 +29,9 @@ import java.net.URI;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.takes.Request;
+import org.takes.misc.Opt;
 import org.takes.rq.RqRequestLine;
+import org.takes.rq.UriHandler;
 import org.takes.rs.RsRedirect;
 
 /**
@@ -108,13 +110,14 @@ public final class TkSmartRedirect extends TkWrap {
             final StringBuilder loc = new StringBuilder(this.origin);
             final URI target = URI.create(this.origin);
             final URI uri = URI.create(new RqRequestLine.Base(this.req).uri());
-            if (uri.getQuery() != null) {
-                if (target.getQuery() == null) {
+            final Opt<String> uriQuery = UriHandler.getQuery(uri);
+            if (uriQuery.has()) {
+                if (!UriHandler.getQuery(target).has()) {
                     loc.append('?');
                 } else {
                     loc.append('&');
                 }
-                loc.append(uri.getQuery());
+                loc.append(uriQuery.get());
             }
             if (uri.getFragment() != null) {
                 loc.append('#');
@@ -123,5 +126,4 @@ public final class TkSmartRedirect extends TkWrap {
             return loc.toString();
         }
     }
-
 }

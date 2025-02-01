@@ -37,6 +37,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import org.cactoos.text.FormattedText;
+import org.takes.rq.UriHandler;
 
 /**
  * HTTP URI/HREF.
@@ -358,12 +359,12 @@ public final class Href implements CharSequence {
      */
     private static URI createBare(final URI link) {
         final URI uri;
-        if (link.getRawQuery() == null && link.getRawFragment() == null) {
+        if (!UriHandler.getRawQuery(link).has() && link.getRawFragment() == null) {
             uri = link;
         } else {
             final String href = link.toString();
             final int idx;
-            if (link.getRawQuery() == null) {
+            if (!UriHandler.getRawQuery(link).has()) {
                 idx = href.indexOf('#');
             } else {
                 idx = href.indexOf('?');

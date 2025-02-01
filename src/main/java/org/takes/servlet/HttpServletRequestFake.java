@@ -50,9 +50,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.takes.Request;
+import org.takes.misc.Opt;
 import org.takes.rq.RqHeaders;
 import org.takes.rq.RqHref;
 import org.takes.rq.RqMethod;
+import org.takes.rq.UriHandler;
 
 /**
  * Fake HttpServletRequest (for unit tests).
@@ -218,11 +220,11 @@ public final class HttpServletRequestFake implements HttpServletRequest {
                 ex
             );
         }
-        String host = uri.getHost();
-        if (host == null || host.isEmpty()) {
-            host = "localhost";
+        Opt<String> host = UriHandler.getHostFromUri(uri);
+        if (!host.has()) {
+            return "localhost";
         }
-        return host;
+        return host.get();
     }
 
     @Override
@@ -237,11 +239,11 @@ public final class HttpServletRequestFake implements HttpServletRequest {
                 ex
             );
         }
-        int port = uri.getPort();
-        if (port == -1) {
-            port = 80;
+        Opt<Integer> port = UriHandler.getPortFromUri(uri);
+        if (!port.has()) {
+            return 80;
         }
-        return port;
+        return port.get();
     }
 
     @Override
